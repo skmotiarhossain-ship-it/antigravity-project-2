@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 const app = express();
@@ -10,49 +9,46 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('Connected to Antigravity MongoDB'))
-  .catch(err => console.log('Connection Error:', err));
+const mongoUri = process.env.MONGO_URI;
+console.log('MONGO_URI starts with:', mongoUri ? mongoUri.substring(0, 15) + '...' : 'UNDEFINED');
 
-const userSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
-  password: { type: String, required: true }
-});
-const User = mongoose.model('User', userSchema);
+mongoose.connect(mongoUri)
+  .then(() => console.log('Connected to Antigravity MongoDB'))
+  .catch(err => console.log('Connection Error:', err.message));
+
+// ===== DEFINE USERS HERE =====
+const USERS = [
+  { username: "saifuddinsk", password: "saifuddin1" },
+  { username: "kutubsk", password: "kutub2" },
+  { username: "jalalsk", password: "jalal3" }
+];
+// =============================
 
 const appStateSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+  userId: { type: String, required: true, unique: true },
   data: { type: Object, required: true },
 }, { timestamps: true });
 
 const AppState = mongoose.model('AppState', appStateSchema);
 
-app.post('/api/auth/signup', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const existingUser = await User.findOne({ username });
-    if (existingUser) return res.status(400).json({ message: 'Username already exists' });
-    
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ username, password: hashedPassword });
-    await newUser.save();
-    
-    res.status(201).json({ userId: newUser._id, username: newUser.username });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+// Health check / root route
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'Antigravity API is running' });
 });
 
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    // Check against hardcoded users array
+    const user = USERS.find(u => u.username === username && u.password === password);
     
-    res.status(200).json({ userId: user._id, username: user.username });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+    
+    // Return a shared identifier so all users access the same data
+    res.status(200).json({ userId: 'shared-data', username: user.username });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -60,8 +56,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.post('/api/state', async (req, res) => {
   try {
-    const userId = req.headers['x-user-id'];
-    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+    const userId = 'shared-data';
 
     const savedState = await AppState.findOneAndUpdate(
       { userId },
@@ -76,8 +71,7 @@ app.post('/api/state', async (req, res) => {
 
 app.get('/api/state', async (req, res) => {
   try {
-    const userId = req.headers['x-user-id'];
-    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+    const userId = 'shared-data';
 
     const stateDoc = await AppState.findOne({ userId });
     if (stateDoc) {

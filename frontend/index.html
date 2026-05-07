@@ -69,11 +69,7 @@
             <input id="loginPass" type="password" class="mt-1 w-full rounded-xl bg-slate-900/60 soft-border px-3 py-2.5 focus-ring" placeholder="••••••••" autocomplete="current-password" />
           </div>
           <button id="authSubmitBtn" class="w-full rounded-xl bg-sky-500 hover:bg-sky-400 transition text-slate-950 font-semibold py-2.5" type="submit">Login</button>
-          <div class="flex items-center justify-between text-xs text-slate-400">
-            <p id="authModeText">Don't have an account?</p>
-            <button type="button" id="toggleAuthModeBtn" class="text-sky-300 hover:text-sky-200 font-semibold">Sign Up</button>
-          </div>
-          <div class="flex items-center justify-center text-xs text-slate-400 mt-2">
+          <div class="flex items-center justify-center text-xs text-slate-400 mt-4">
             <button type="button" id="demoSeedBtn" class="text-sky-300 hover:text-sky-200 hidden">Load demo data</button>
           </div>
         </form>
@@ -1818,14 +1814,6 @@
       }
     }
 
-    let isSignUpMode = false;
-    document.getElementById('toggleAuthModeBtn')?.addEventListener('click', () => {
-      isSignUpMode = !isSignUpMode;
-      document.getElementById('authSubmitBtn').textContent = isSignUpMode ? 'Sign Up' : 'Login';
-      document.getElementById('authModeText').textContent = isSignUpMode ? 'Already have an account?' : "Don't have an account?";
-      document.getElementById('toggleAuthModeBtn').textContent = isSignUpMode ? 'Login' : 'Sign Up';
-    });
-
     function logout(){
       state = defaultState();
       saveState(state);
@@ -1840,7 +1828,9 @@
         if (res.ok) {
           const serverState = await res.json();
           if (serverState && serverState.ui) {
+            const currentAuth = state.auth;
             state = serverState;
+            state.auth = currentAuth;
             migrateState(state);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
           }
@@ -1859,9 +1849,8 @@
         const p = $('#loginPass').value.trim();
         if (!u || !p){ toast('Please enter username and password.', 'warning'); return; }
         
-        const endpoint = isSignUpMode ? '/api/auth/signup' : '/api/auth/login';
         try {
-          const res = await fetch(`http://localhost:5000${endpoint}`, {
+          const res = await fetch(`http://localhost:5000/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: u, password: p })
