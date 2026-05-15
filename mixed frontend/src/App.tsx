@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { AppData } from "./store";
-import { USERS, loadData, saveData, formatBengaliDate } from "./store";
+import { DEFAULT_DATA, loadLocalData, saveLocalData } from "./store";
+import { authAPI, stateAPI, getToken, setToken, removeToken, onAuthError } from "./utils/api";
 import DashboardPage from "./pages/DashboardPage";
 import PurchasePage from "./pages/PurchasePage";
 import SalesPage from "./pages/SalesPage";
@@ -14,7 +15,7 @@ import TrackPage from "./pages/TrackPage";
 import {
   ShoppingCart, Factory, TrendingUp, LayoutDashboard,
   LogOut, ChevronDown, ChevronUp, History, User, AlertTriangle, Package, Thermometer, Droplets, Wind, Cog, DollarSign,
-  Users, CreditCard, PieChart, Menu, X, Activity, MapPin
+  Users, CreditCard, PieChart, Menu, X, Activity, MapPin, Loader2
 } from 'lucide-react';
 
 type Page =
@@ -39,38 +40,79 @@ export default function App() {
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [isFetchingData, setIsFetchingData] = useState(false);
+
   const [page, setPage] = useState<Page>("dashboard");
   const [viewOnlyRecord, setViewOnlyRecord] = useState<any>(null);
   const [processExpanded, setProcessExpanded] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const [data, setDataState] = useState<AppData>(() => loadData());
+  // Initialize with DEFAULT_DATA so types are safe, we'll overwrite it soon
+  const [data, setDataState] = useState<AppData>(DEFAULT_DATA);
+
+  const fetchInitialData = async () => {
+    setIsFetchingData(true);
+    try {
+      const fetchedData = await stateAPI.fetchState();
+      setDataState({ ...DEFAULT_DATA, ...fetchedData });
+      saveLocalData({ ...DEFAULT_DATA, ...fetchedData });
+    } catch (err) {
+      console.error("Failed to fetch state from backend, falling back to local storage:", err);
+      setDataState(loadLocalData());
+    } finally {
+      setIsFetchingData(false);
+    }
+  };
 
   useEffect(() => {
-    const savedUser = sessionStorage.getItem("mh_current_user");
-    if (savedUser) {
-      setCurrentUser(savedUser);
-      setLoggedIn(true);
-    }
+    const setupAuth = () => {
+      onAuthError(() => {
+        setLoggedIn(false);
+        setCurrentUser("");
+        sessionStorage.removeItem("mh_current_user");
+      });
+
+      const token = getToken();
+      const savedUser = sessionStorage.getItem("mh_current_user");
+      
+      if (token && savedUser) {
+        setCurrentUser(savedUser);
+        setLoggedIn(true);
+        fetchInitialData();
+      }
+    };
+    setupAuth();
   }, []);
 
   const setData = (newData: AppData) => {
     setDataState(newData);
-    saveData(newData);
+    saveLocalData(newData);
+    
+    // Async push to backend
+    stateAPI.saveState(newData).catch(err => {
+      console.error("Failed to sync data to backend:", err);
+      // Optional: Add some user facing toast notification here
+    });
   };
 
-  const handleLogin = (e?: React.FormEvent) => {
+  const handleLogin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    const user = USERS.find(
-      (u) => u.username === loginUsername && u.password === loginPassword
-    );
-    if (user) {
-      setCurrentUser(user.displayName);
+    setIsAuthenticating(true);
+    setLoginError("");
+
+    try {
+      const res = await authAPI.login(loginUsername, loginPassword);
+      setToken(res.token);
+      setCurrentUser(res.user.displayName);
       setLoggedIn(true);
-      setLoginError("");
-      sessionStorage.setItem("mh_current_user", user.displayName);
-    } else {
-      setLoginError("Invalid username or password.");
+      sessionStorage.setItem("mh_current_user", res.user.displayName);
+      
+      await fetchInitialData();
+    } catch (err: any) {
+      setLoginError(err.message || "Invalid username or password.");
+    } finally {
+      setIsAuthenticating(false);
     }
   };
 
@@ -78,6 +120,7 @@ export default function App() {
     setLoggedIn(false);
     setCurrentUser("");
     sessionStorage.removeItem("mh_current_user");
+    removeToken();
     setPage("dashboard");
   };
 
@@ -129,9 +172,17 @@ export default function App() {
               )}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold py-3 rounded-lg transition-all shadow-lg shadow-green-600/20"
+                disabled={isAuthenticating}
+                className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold py-3 rounded-lg transition-all shadow-lg shadow-green-600/20 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Sign In
+                {isAuthenticating ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Authenticating...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </button>
             </form>
           </div>
@@ -296,7 +347,13 @@ export default function App() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-6 relative">
+          {isFetchingData ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/50 backdrop-blur-sm z-10">
+              <Loader2 className="w-10 h-10 text-emerald-500 animate-spin mb-4" />
+              <p className="text-slate-400 font-medium animate-pulse">Syncing data...</p>
+            </div>
+          ) : null}
           {renderPage()}
         </main>
       </div>

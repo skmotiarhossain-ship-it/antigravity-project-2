@@ -128,7 +128,7 @@ export interface AppData {
   changeLogs: ChangeLog[];
 }
 
-const DEFAULT_DATA: AppData = {
+export const DEFAULT_DATA: AppData = {
   suppliers: ["Saiful", "Dabasis", "Ripone", "Ponkaj", "Turunda", "AROJ", "Jamal vi", "AJITDA", "AFSAR"],
   customers: ["Local Market", "Wholesale Buyer", "Bapy-sunko", "Siraj"],
   riceTypes: ["Miniket", "Gobindobhog", "Basmati", "Sona Masoori", "IR-36"],
@@ -185,7 +185,7 @@ const DEFAULT_DATA: AppData = {
 
 const STORAGE_KEY = "mh_rice_mill_data";
 
-export function loadData(): AppData {
+export function loadLocalData(): AppData {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -200,11 +200,11 @@ export function loadData(): AppData {
   
   // Only inject seed data if local storage is empty
   const data = { ...DEFAULT_DATA };
-  saveData(data);
+  saveLocalData(data);
   return data;
 }
 
-export function saveData(data: AppData): void {
+export function saveLocalData(data: AppData): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
