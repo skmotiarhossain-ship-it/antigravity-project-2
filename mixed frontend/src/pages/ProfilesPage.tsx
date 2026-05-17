@@ -26,7 +26,7 @@ export default function ProfilesPage({ data, setData, currentUser }: Props) {
 
   // Check for incomplete profiles on mount
   useEffect(() => {
-    const incompleteCount = data.profiles.filter(p => !p.phone || !p.address).length;
+    const incompleteCount = (data.profiles || []).filter(p => !p.phone || !p.address).length;
     if (incompleteCount > 0) {
       setToastMessage(`${incompleteCount} profiles are incomplete (missing phone or address)`);
       const timer = setTimeout(() => {
@@ -39,7 +39,7 @@ export default function ProfilesPage({ data, setData, currentUser }: Props) {
   // Auto-migrate string arrays to profiles if they don't exist
   useEffect(() => {
     let modified = false;
-    const newProfiles = [...data.profiles];
+    const newProfiles = [...(data.profiles || [])];
 
     const ensureProfile = (name: string, type: "customer" | "supplier" | "worker") => {
       if (!newProfiles.find(p => p.name === name && p.type === type)) {
@@ -48,9 +48,9 @@ export default function ProfilesPage({ data, setData, currentUser }: Props) {
       }
     };
 
-    data.customers.forEach(n => ensureProfile(n, "customer"));
-    data.suppliers.forEach(n => ensureProfile(n, "supplier"));
-    data.workers.forEach(n => ensureProfile(n, "worker"));
+    (data.customers || []).forEach(n => ensureProfile(n, "customer"));
+    (data.suppliers || []).forEach(n => ensureProfile(n, "supplier"));
+    (data.workers || []).forEach(n => ensureProfile(n, "worker"));
 
     if (modified) {
       setData({ ...data, profiles: newProfiles });
@@ -94,15 +94,15 @@ export default function ProfilesPage({ data, setData, currentUser }: Props) {
 
   const handleDelete = (id: string) => {
     if (!confirm("Delete this profile? Existing records using this name won't be deleted, but the profile will be removed.")) return;
-    const profile = data.profiles.find(p => p.id === id);
-    let newData = { ...data, profiles: data.profiles.filter(p => p.id !== id) };
+    const profile = (data.profiles || []).find(p => p.id === id);
+    let newData = { ...data, profiles: (data.profiles || []).filter(p => p.id !== id) };
     if (profile) {
       newData = addChangeLog(newData, currentUser, "Deleted", "Profiles", `Deleted profile: ${profile.name}`);
     }
     setData(newData);
   };
 
-  const filteredProfiles = data.profiles.filter(p => {
+  const filteredProfiles = (data.profiles || []).filter(p => {
     if (filterType !== "all" && p.type !== filterType) return false;
     if (search && !p.name.toLowerCase().includes(search.toLowerCase()) && !p.phone.includes(search)) return false;
     return true;

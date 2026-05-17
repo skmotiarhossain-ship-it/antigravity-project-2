@@ -167,7 +167,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
   // ----------------------------------------------------
   if (showKeypad) {
     return (
-      <div className="flex flex-col h-full bg-slate-50 text-slate-900 absolute inset-0 z-50">
+      <div className="flex flex-col fixed inset-0 z-[60] bg-slate-50 text-slate-900 h-[100dvh]">
         {/* Header */}
         <div className={`flex items-center gap-3 px-4 py-4 text-white ${txType === 'out' ? 'bg-red-500' : 'bg-green-500'}`}>
           <button onClick={() => setShowKeypad(false)} className="hover:bg-black/10 p-1 rounded-full transition-colors">
@@ -259,7 +259,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
     const balance = getProfileBalance(activeProfile);
 
     return (
-      <div className="flex flex-col h-full bg-slate-50">
+      <div className="flex flex-col fixed inset-0 z-[60] bg-slate-50 h-[100dvh]">
         <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3 shrink-0 shadow-sm">
           <button onClick={() => setActiveProfile(null)} className="text-slate-500 hover:text-slate-800 p-1 rounded-full transition-colors">
             <ArrowLeft className="w-6 h-6" />
@@ -330,12 +330,14 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
   // ----------------------------------------------------
   return (
     <div className="flex flex-col h-full bg-slate-50">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-4 py-4 shrink-0 shadow-sm z-10">
-        <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2 mb-4">
-          <Users className="w-6 h-6 text-blue-600" />
-          Khatabook Ledger
-        </h2>
+      {/* Sticky Header Container */}
+      <div className="sticky top-0 z-20 bg-slate-50">
+        {/* Header */}
+        <div className="bg-white border-b border-slate-200 px-4 py-4 shrink-0 shadow-sm z-10">
+          <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2 mb-4">
+            <Users className="w-6 h-6 text-blue-600" />
+            Khatabook Ledger
+          </h2>
         
         {/* Pills / Tabs */}
         <div className="flex bg-slate-100 p-1 rounded-xl shadow-inner">
@@ -358,18 +360,18 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
             WORKERS
           </button>
         </div>
-      </div>
-
-      <div className="p-4 shrink-0 bg-white border-b border-slate-200">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-          <input
-            type="text"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search name..."
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all"
-          />
+        
+        <div className="p-4 shrink-0 bg-white border-b border-slate-200 shadow-sm">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search name..."
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 focus:outline-none transition-all"
+            />
+          </div>
         </div>
       </div>
 
@@ -400,7 +402,6 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
                       </>
                     )}
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-blue-500 transition-colors" />
                 </div>
               </div>
             );

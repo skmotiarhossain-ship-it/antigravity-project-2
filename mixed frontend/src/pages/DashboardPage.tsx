@@ -27,10 +27,10 @@ export default function DashboardPage({ data }: Props) {
   const minSellPrice = avgPurchaseRate + processCostPerBag;
 
   const stats = [
-    { label: 'Total Purchases', value: `₹${totalPurchaseAmount.toFixed(0)}`, sub: `${totalPurchased} bags`, icon: ShoppingCart, color: 'from-blue-600/20 to-blue-800/20', border: 'border-blue-600/30', accent: 'text-blue-400' },
-    { label: 'Total Sales', value: `₹${totalSalesAmount.toFixed(0)}`, sub: `${totalSold} bags`, icon: TrendingUp, color: 'from-green-600/20 to-green-800/20', border: 'border-green-600/30', accent: 'text-green-400' },
-    { label: 'Process Cost', value: `₹${totalProcessCost.toFixed(0)}`, sub: 'wages+transport', icon: Factory, color: 'from-purple-600/20 to-purple-800/20', border: 'border-purple-600/30', accent: 'text-purple-400' },
-    { label: 'Net P&L', value: `${netProfit >= 0 ? "+" : ""}₹${netProfit.toFixed(0)}`, sub: netProfit >= 0 ? "Profit" : "Loss", icon: DollarSign, color: netProfit >= 0 ? 'from-emerald-600/20 to-emerald-800/20' : 'from-red-600/20 to-red-800/20', border: netProfit >= 0 ? 'border-emerald-600/30' : 'border-red-600/30', accent: netProfit >= 0 ? 'text-emerald-400' : 'text-red-400' },
+    { label: 'Total Purchases', value: `₹${totalPurchaseAmount.toFixed(0)}`, sub: `${totalPurchased} bags`, icon: ShoppingCart, accent: 'text-blue-500', iconBg: 'bg-blue-500/10' },
+    { label: 'Total Sales', value: `₹${totalSalesAmount.toFixed(0)}`, sub: `${totalSold} bags`, icon: TrendingUp, accent: 'text-green-500', iconBg: 'bg-green-500/10' },
+    { label: 'Process Cost', value: `₹${totalProcessCost.toFixed(0)}`, sub: 'wages+transport', icon: Factory, accent: 'text-purple-500', iconBg: 'bg-purple-500/10' },
+    { label: 'Net P&L', value: `${netProfit >= 0 ? "+" : ""}₹${netProfit.toFixed(0)}`, sub: netProfit >= 0 ? "Profit" : "Loss", icon: DollarSign, accent: netProfit >= 0 ? 'text-emerald-500' : 'text-red-500', iconBg: netProfit >= 0 ? 'bg-emerald-500/10' : 'bg-red-500/10' },
   ];
 
   // Calculate stock under process
@@ -59,28 +59,30 @@ export default function DashboardPage({ data }: Props) {
   return (
     <div className="space-y-6 flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between shrink-0">
+      <div className="flex items-start justify-between shrink-0 gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Dashboard</h2>
-          <p className="text-slate-400 text-sm mt-1">Overview of your rice business</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-white">Dashboard</h2>
+          <p className="text-slate-400 text-xs sm:text-sm mt-1">Overview of your rice business</p>
         </div>
-        <div className="flex items-center gap-2 bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-2">
-          <Calendar className="w-4 h-4 text-slate-400" />
-          <span className="text-white text-sm font-medium">{formatBengaliDate(today)}</span>
+        <div className="flex items-center gap-2 bg-slate-800/50 border border-slate-700/50 rounded-lg px-3 py-1.5 shadow-sm mt-1">
+          <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+          <span className="text-white text-xs font-medium whitespace-nowrap">{formatBengaliDate(today)}</span>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto pb-6 space-y-6">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {stats.map((stat, i) => (
-            <div key={i} className={`bg-gradient-to-br ${stat.color} border ${stat.border} rounded-xl p-5 shadow-lg`}>
+            <div key={i} className="bg-slate-800/80 border border-slate-700/50 rounded-xl p-4 shadow-sm hover:border-slate-600 transition-colors">
               <div className="flex items-center justify-between mb-3">
-                <stat.icon className={`w-5 h-5 ${stat.accent}`} />
+                <p className="text-slate-400 text-xs font-medium">{stat.label}</p>
+                <div className={`p-1.5 rounded-lg ${stat.iconBg}`}>
+                  <stat.icon className={`w-4 h-4 ${stat.accent}`} />
+                </div>
               </div>
-              <p className="text-2xl font-bold text-white">{stat.value}</p>
-              <p className={`text-xs mt-1 ${stat.accent} opacity-80`}>{stat.sub}</p>
-              <p className="text-slate-400 text-sm mt-1">{stat.label}</p>
+              <p className="text-xl sm:text-2xl font-bold text-white mb-0.5">{stat.value}</p>
+              <p className={`text-[10px] sm:text-xs font-medium ${stat.accent}`}>{stat.sub}</p>
             </div>
           ))}
         </div>

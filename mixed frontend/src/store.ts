@@ -190,10 +190,22 @@ export function loadLocalData(): AppData {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Merge with defaults to ensure all keys exist
+      // Merge with defaults to ensure all keys exist and are arrays where expected
       return {
         ...DEFAULT_DATA,
         ...parsed,
+        suppliers: parsed.suppliers || DEFAULT_DATA.suppliers,
+        customers: parsed.customers || DEFAULT_DATA.customers,
+        riceTypes: parsed.riceTypes || DEFAULT_DATA.riceTypes,
+        godowns: parsed.godowns || DEFAULT_DATA.godowns,
+        workers: parsed.workers || DEFAULT_DATA.workers,
+        profiles: parsed.profiles || DEFAULT_DATA.profiles,
+        transactions: parsed.transactions || DEFAULT_DATA.transactions,
+        purchases: parsed.purchases || DEFAULT_DATA.purchases,
+        sales: parsed.sales || DEFAULT_DATA.sales,
+        processes: parsed.processes || DEFAULT_DATA.processes,
+        expenses: parsed.expenses || DEFAULT_DATA.expenses,
+        changeLogs: parsed.changeLogs || DEFAULT_DATA.changeLogs,
       };
     }
   } catch {}

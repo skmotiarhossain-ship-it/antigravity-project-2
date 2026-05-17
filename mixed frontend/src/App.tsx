@@ -11,7 +11,6 @@ import ExpensesPage from "./pages/ExpensesPage";
 import ProfilesPage from "./pages/ProfilesPage";
 import CashRegisterPage from "./pages/CashRegisterPage";
 import ProfitPredictorPage from "./pages/ProfitPredictorPage";
-import TrackPage from "./pages/TrackPage";
 import {
   ShoppingCart, Factory, TrendingUp, LayoutDashboard,
   LogOut, ChevronDown, ChevronUp, History, User, AlertTriangle, Package, Thermometer, Droplets, Wind, Cog, DollarSign,
@@ -30,8 +29,7 @@ type Page =
   | "changelog"
   | "profiles"
   | "cashregister"
-  | "profitpredictor"
-  | "track";
+  | "profitpredictor";
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -205,7 +203,6 @@ export default function App() {
       case "profiles": return <ProfilesPage data={data} setData={setData} currentUser={currentUser} />;
       case "cashregister": return <CashRegisterPage data={data} setData={setData} currentUser={currentUser} />;
       case "profitpredictor": return <ProfitPredictorPage data={data} />;
-      case "track": return <TrackPage data={data} onViewRecord={(page, record) => { setPage(page as Page); setViewOnlyRecord(record); }} />;
       default: return <DashboardPage data={data} />;
     }
   };
@@ -224,15 +221,12 @@ export default function App() {
     { id: 'profiles' as Page, label: 'Profiles', icon: Users },
     { id: 'cashregister' as Page, label: 'Cash Register', icon: CreditCard },
     { id: 'profitpredictor' as Page, label: 'Profit Predictor', icon: PieChart },
-    { id: 'status', label: 'Status', icon: Activity, children: [
-      { id: 'track' as Page, label: 'Track', icon: MapPin }
-    ]},
     { id: 'expenses' as Page, label: 'Expenses', icon: DollarSign },
     { id: 'changelog' as Page, label: 'Activity Log', icon: History },
   ];
 
   return (
-    <div className="flex flex-col h-screen bg-slate-900 overflow-hidden relative">
+    <div className="flex flex-col h-[100dvh] w-full bg-slate-900 overflow-hidden overflow-x-hidden relative">
       {/* Universal Top Bar */}
       <div className="flex items-center justify-between bg-slate-950 border-b border-slate-800 p-4 shrink-0 z-40 relative">
         <div className="flex items-center gap-3">
