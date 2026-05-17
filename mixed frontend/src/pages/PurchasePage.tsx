@@ -37,7 +37,7 @@ export default function PurchasePage({ data, setData, currentUser, viewOnlyRecor
   const today = new Date();
 
   const totalBags = form.godownAllocations.reduce((s, a) => s + (Number(a.bags) || 0), 0);
-  const chitBags = (Number(form.chitInKg) || 0) > 0 ? (Number(form.chitInKg) || 0) / form.bagSize : 0;
+  const chitBags = (Number(form.chitInKg) || 0) > 0 ? (Number(form.chitInKg) || 0) / Number(form.bagSize) : 0;
   const effectiveBags = totalBags + chitBags;
   const totalAmount = effectiveBags * (Number(form.ratePerBag) || 0);
 
@@ -48,7 +48,7 @@ export default function PurchasePage({ data, setData, currentUser, viewOnlyRecor
       setShowErrors(true);
       return;
     }
-    if ((Number(form.chitInKg) || 0) >= form.bagSize) { 
+    if ((Number(form.chitInKg) || 0) >= Number(form.bagSize)) { 
       alert("Chit amount must be less than the bag size."); 
       return; 
     }
@@ -62,7 +62,7 @@ export default function PurchasePage({ data, setData, currentUser, viewOnlyRecor
       ratePerBag: Number(form.ratePerBag),
       bagSize: form.bagSize,
       godownAllocations: form.godownAllocations,
-      chitInKg: form.chitInKg,
+      chitInKg: Number(form.chitInKg) || 0,
       totalBags,
       totalAmount,
       createdBy: currentUser,
@@ -208,7 +208,7 @@ export default function PurchasePage({ data, setData, currentUser, viewOnlyRecor
             <label className="block text-xs text-gray-500 mb-2 font-medium">
               Chit in KG <span className="text-gray-400">(extra kg beyond full bags)</span>
             </label>
-            <div className={`flex items-center border rounded-lg overflow-hidden ${showErrors && (Number(form.chitInKg) || 0) >= form.bagSize ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-200'}`}>
+            <div className={`flex items-center border rounded-lg overflow-hidden ${showErrors && (Number(form.chitInKg) || 0) >= Number(form.bagSize) ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-200'}`}>
               <button
                 type="button"
                 onClick={() => !isViewOnly && setForm({ ...form, chitInKg: Math.max(0, (Number(form.chitInKg) || 0) - 1) })}
@@ -232,7 +232,7 @@ export default function PurchasePage({ data, setData, currentUser, viewOnlyRecor
             </div>
             {Number(form.chitInKg) > 0 && (
               <p className="text-xs text-green-600 mt-1.5">
-                {form.chitInKg}kg ÷ {form.bagSize}kg = {(Number(form.chitInKg) / form.bagSize).toFixed(3)} extra bags
+                {form.chitInKg}kg ÷ {form.bagSize}kg = {(Number(form.chitInKg) / Number(form.bagSize)).toFixed(3)} extra bags
               </p>
             )}
           </div>
