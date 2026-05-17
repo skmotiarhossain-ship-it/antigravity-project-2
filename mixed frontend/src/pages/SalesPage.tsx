@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { AppData, SalesRecord, GodownAllocation } from "../store";
+import type { AppData, SalesRecord, GodownAllocation, BagSize } from "../store";
 import { generateId, formatBengaliDate, addChangeLog, getGodownStock } from "../store";
 import SearchableDropdown from "../components/SearchableDropdown";
 import GodownAllocator from "../components/GodownAllocator";
@@ -59,7 +59,7 @@ export default function SalesPage({ data, setData, currentUser, viewOnlyRecord }
       setShowErrors(true);
       return; 
     }
-    if ((Number(form.chitInKg) || 0) >= form.bagSize) { 
+    if ((Number(form.chitInKg) || 0) >= Number(form.bagSize)) { 
       alert("Chit amount must be less than the bag size."); 
       return; 
     }
@@ -71,9 +71,9 @@ export default function SalesPage({ data, setData, currentUser, viewOnlyRecord }
       customerName: form.customerName,
       type: form.type,
       ratePerBag: Number(form.ratePerBag),
-      bagSize: form.bagSize,
+      bagSize: form.bagSize as BagSize,
       godownAllocations: form.godownAllocations,
-      chitInKg: form.chitInKg,
+      chitInKg: Number(form.chitInKg) || 0,
       totalBags,
       totalAmount,
       createdBy: currentUser,

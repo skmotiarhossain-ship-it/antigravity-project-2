@@ -72,9 +72,9 @@ export default function DashboardPage({ data }: Props) {
 
       <div className="flex-1 overflow-y-auto pb-6 space-y-6">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {stats.map((stat, i) => (
-            <div key={i} className={`bg-gradient-to-br ${stat.color} border ${stat.border} rounded-xl p-5 shadow-lg`}>
+            <div key={i} className={`bg-slate-900 border ${stat.border} rounded-xl p-4 shadow-sm`}>
               <div className="flex items-center justify-between mb-3">
                 <stat.icon className={`w-5 h-5 ${stat.accent}`} />
               </div>

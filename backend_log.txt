@@ -1,0 +1,9 @@
+
+> antigravity-backend@1.0.0 start
+> node server.js
+
+MONGO_URI starts with: UNDEFINED
+(node:73202) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Server running on port 5000
+Connection Error: The `uri` parameter to `openUri()` must be a string, got "undefined". Make sure the first parameter to `mongoose.connect()` or `mongoose.createConnection()` is a string.
