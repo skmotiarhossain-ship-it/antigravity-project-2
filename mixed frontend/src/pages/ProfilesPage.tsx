@@ -104,7 +104,7 @@ export default function ProfilesPage({ data, setData, currentUser }: Props) {
 
   const filteredProfiles = (data.profiles || []).filter(p => {
     if (filterType !== "all" && p.type !== filterType) return false;
-    if (search && !p.name.toLowerCase().includes(search.toLowerCase()) && !p.phone.includes(search)) return false;
+    if (search && !p.name.toLowerCase().includes(search.toLowerCase()) && !p.phone?.includes(search)) return false;
     return true;
   });
 

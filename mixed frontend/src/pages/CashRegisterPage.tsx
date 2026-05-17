@@ -151,7 +151,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
     return true;
   })]));
 
-  const filteredEntities = allTabEntities.filter(e => e.toLowerCase().includes(search.toLowerCase()));
+  const filteredEntities = allTabEntities.filter(e => (e || '').toLowerCase().includes((search || '').toLowerCase()));
 
   // Calculate balances helper
   const getProfileBalance = (name: string) => {
@@ -167,7 +167,11 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
   // ----------------------------------------------------
   if (showKeypad) {
     return (
+<<<<<<< HEAD
       <div className="flex flex-col fixed inset-0 z-[60] bg-slate-50 text-slate-900 h-[100dvh]">
+=======
+      <div className="flex flex-col h-full bg-slate-50 text-slate-900 fixed inset-0 z-50 overflow-hidden">
+>>>>>>> fee345cceba34562c168eb10b8b583444352fc2a
         {/* Header */}
         <div className={`flex items-center gap-3 px-4 py-4 text-white ${txType === 'out' ? 'bg-red-500' : 'bg-green-500'}`}>
           <button onClick={() => setShowKeypad(false)} className="hover:bg-black/10 p-1 rounded-full transition-colors">
@@ -285,10 +289,10 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
               {balance > 0 && <p className="text-sm font-bold text-green-600 bg-green-100 px-3 py-1.5 rounded-full inline-block shadow-sm">You'll Get</p>}
               {balance < 0 && <p className="text-sm font-bold text-red-600 bg-red-100 px-3 py-1.5 rounded-full inline-block shadow-sm">You'll Give</p>}
             </div>
+            </div>
           </div>
-        </div>
 
-        <div className="flex-1 overflow-y-auto px-2 pb-24">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-2 pb-24">
           <div className="space-y-2">
             {profileTxs.map(tx => (
               <div key={tx.id} className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex justify-between items-center hover:border-slate-300 transition-colors">
@@ -375,7 +379,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-slate-50">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50">
         <div className="divide-y divide-slate-200">
           {filteredEntities.map((entity, idx) => {
             const balance = getProfileBalance(entity);
