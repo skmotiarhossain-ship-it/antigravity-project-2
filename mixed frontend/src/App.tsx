@@ -14,7 +14,7 @@ import ProfitPredictorPage from "./pages/ProfitPredictorPage";
 import {
   ShoppingCart, Factory, TrendingUp, LayoutDashboard,
   LogOut, ChevronDown, ChevronUp, History, User, AlertTriangle, Package, Thermometer, Droplets, Wind, Cog, DollarSign,
-  Users, CreditCard, PieChart, Menu, X, Activity, MapPin, Loader2
+  Users, CreditCard, PieChart, Menu, X, Loader2
 } from 'lucide-react';
 
 type Page =
@@ -230,20 +230,13 @@ export default function App() {
     { id: 'profiles' as Page, label: 'Profiles', icon: Users },
     { id: 'cashregister' as Page, label: 'Cash Register', icon: CreditCard },
     { id: 'profitpredictor' as Page, label: 'Profit Predictor', icon: PieChart },
-<<<<<<< HEAD
-=======
-    { id: 'status', label: 'Status', icon: Activity, children: []},
->>>>>>> fee345cceba34562c168eb10b8b583444352fc2a
+
     { id: 'expenses' as Page, label: 'Expenses', icon: DollarSign },
     { id: 'changelog' as Page, label: 'Activity Log', icon: History },
   ];
 
   return (
-<<<<<<< HEAD
     <div className="flex flex-col h-[100dvh] w-full bg-slate-900 overflow-hidden overflow-x-hidden relative">
-=======
-    <div className="flex flex-col h-[100dvh] bg-slate-900 overflow-hidden relative">
->>>>>>> fee345cceba34562c168eb10b8b583444352fc2a
       {/* Universal Top Bar */}
       <div className="flex items-center justify-between bg-slate-950 border-b border-slate-800 p-4 shrink-0 z-40 relative">
         <div className="flex items-center gap-3">

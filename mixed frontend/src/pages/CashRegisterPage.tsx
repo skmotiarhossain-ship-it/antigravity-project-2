@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import type { AppData, CashTransaction } from "../store";
 import { generateId, addChangeLog, formatBengaliDate } from "../store";
-import { Users, Search, ChevronRight, ArrowLeft, Calendar, FileText } from 'lucide-react';
+import { Users, Search, ArrowLeft, Calendar, FileText } from 'lucide-react';
 
 interface Props {
   data: AppData;
@@ -167,11 +167,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
   // ----------------------------------------------------
   if (showKeypad) {
     return (
-<<<<<<< HEAD
       <div className="flex flex-col fixed inset-0 z-[60] bg-slate-50 text-slate-900 h-[100dvh]">
-=======
-      <div className="flex flex-col h-full bg-slate-50 text-slate-900 fixed inset-0 z-50 overflow-hidden">
->>>>>>> fee345cceba34562c168eb10b8b583444352fc2a
         {/* Header */}
         <div className={`flex items-center gap-3 px-4 py-4 text-white ${txType === 'out' ? 'bg-red-500' : 'bg-green-500'}`}>
           <button onClick={() => setShowKeypad(false)} className="hover:bg-black/10 p-1 rounded-full transition-colors">
@@ -363,6 +359,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
           >
             WORKERS
           </button>
+        </div>
         </div>
         
         <div className="p-4 shrink-0 bg-white border-b border-slate-200 shadow-sm">
