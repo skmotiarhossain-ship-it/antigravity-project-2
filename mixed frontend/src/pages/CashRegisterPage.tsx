@@ -131,7 +131,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
   let entities: string[] = [];
   if (activeTab === "customers") entities = data.customers;
   else if (activeTab === "suppliers") entities = data.suppliers;
-  else if (activeTab === "workers") entities = data.workers;
+  else if (activeTab === "workers") entities = data.workers || [];
 
   // Make sure to include profiles from transactions that might not be in the arrays
   const txEntities = data.transactions.map(t => t.entityName);

@@ -11,10 +11,11 @@ import ExpensesPage from "./pages/ExpensesPage";
 import ProfilesPage from "./pages/ProfilesPage";
 import CashRegisterPage from "./pages/CashRegisterPage";
 import ProfitPredictorPage from "./pages/ProfitPredictorPage";
+import TrackPage from "./pages/TrackPage";
 import {
   ShoppingCart, Factory, TrendingUp, LayoutDashboard,
   LogOut, ChevronDown, ChevronUp, History, User, AlertTriangle, Package, Thermometer, Droplets, Wind, Cog, DollarSign,
-  Users, CreditCard, PieChart, Menu, X, Loader2
+  Users, CreditCard, PieChart, Menu, X, Activity, Loader2
 } from 'lucide-react';
 
 type Page =
@@ -29,7 +30,8 @@ type Page =
   | "changelog"
   | "profiles"
   | "cashregister"
-  | "profitpredictor";
+  | "profitpredictor"
+  | "track";
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -212,6 +214,7 @@ export default function App() {
       case "profiles": return <ProfilesPage data={data} setData={setData} currentUser={currentUser} />;
       case "cashregister": return <CashRegisterPage data={data} setData={setData} currentUser={currentUser} />;
       case "profitpredictor": return <ProfitPredictorPage data={data} />;
+      case "track": return <TrackPage data={data} />;
       default: return <DashboardPage data={data} />;
     }
   };
@@ -232,6 +235,7 @@ export default function App() {
     { id: 'profitpredictor' as Page, label: 'Profit Predictor', icon: PieChart },
 
     { id: 'expenses' as Page, label: 'Expenses', icon: DollarSign },
+    { id: 'track' as Page, label: 'Track Batch', icon: Activity },
     { id: 'changelog' as Page, label: 'Activity Log', icon: History },
   ];
 

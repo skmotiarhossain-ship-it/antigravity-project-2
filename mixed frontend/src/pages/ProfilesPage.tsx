@@ -104,14 +104,14 @@ export default function ProfilesPage({ data, setData, currentUser }: Props) {
 
   const filteredProfiles = (data.profiles || []).filter(p => {
     if (filterType !== "all" && p.type !== filterType) return false;
-    if (search && !p.name.toLowerCase().includes(search.toLowerCase()) && !p.phone?.includes(search)) return false;
+    if (search && !p.name?.toLowerCase().includes(search.toLowerCase()) && !p.phone?.includes(search)) return false;
     return true;
   });
 
   if (showForm) {
     return (
-      <div className="flex flex-col h-full bg-slate-900">
-        <div className="bg-slate-800 text-white px-4 py-4 flex items-center gap-3 border-b border-slate-700">
+      <div className="flex flex-col fixed inset-0 z-[60] h-[100dvh] bg-slate-900">
+        <div className="bg-slate-800 text-white px-4 py-4 flex items-center gap-3 border-b border-slate-700 flex-shrink-0">
           <button onClick={() => { setShowForm(false); setForm(emptyProfile()); }} className="text-slate-400 hover:text-white">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           </button>

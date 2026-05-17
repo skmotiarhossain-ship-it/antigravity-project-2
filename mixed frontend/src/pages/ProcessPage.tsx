@@ -572,9 +572,8 @@ export default function ProcessPage({ data, setData, currentUser, subType, viewO
     );
   }
 
-  // Process Form
   return (
-    <div className="flex flex-col h-full bg-gray-50">
+    <div className="flex flex-col fixed inset-0 z-[60] h-[100dvh] bg-gray-50">
       <div className="bg-green-600 text-white px-4 py-3 flex items-center gap-3 flex-shrink-0">
         <button onClick={() => { setShowForm(false); setForm(emptyForm()); }} className="hover:bg-green-700 p-1 rounded">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
