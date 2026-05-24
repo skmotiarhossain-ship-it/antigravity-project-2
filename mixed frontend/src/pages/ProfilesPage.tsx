@@ -77,9 +77,15 @@ export default function ProfilesPage({ data, setData, currentUser }: Props) {
       newData = addChangeLog(newData, currentUser, "Added", "Profiles", `Added new ${profile.type}: ${profile.name}`);
       
       // Also sync to old string arrays for backward compatibility
-      if (profile.type === "customer" && !newData.customers.includes(profile.name)) newData.customers.push(profile.name);
-      if (profile.type === "supplier" && !newData.suppliers.includes(profile.name)) newData.suppliers.push(profile.name);
-      if (profile.type === "worker" && !newData.workers.includes(profile.name)) newData.workers.push(profile.name);
+      if (profile.type === "customer" && !(newData.customers || []).includes(profile.name)) {
+        newData.customers = [...(newData.customers || []), profile.name];
+      }
+      if (profile.type === "supplier" && !(newData.suppliers || []).includes(profile.name)) {
+        newData.suppliers = [...(newData.suppliers || []), profile.name];
+      }
+      if (profile.type === "worker" && !(newData.workers || []).includes(profile.name)) {
+        newData.workers = [...(newData.workers || []), profile.name];
+      }
     }
 
     setData(newData);
@@ -103,8 +109,8 @@ export default function ProfilesPage({ data, setData, currentUser }: Props) {
   };
 
   const filteredProfiles = (data.profiles || []).filter(p => {
-    if (filterType !== "all" && p.type !== filterType) return false;
-    if (search && !p.name?.toLowerCase().includes(search.toLowerCase()) && !p.phone?.includes(search)) return false;
+    if (filterType !== "all" && (p.type || "customer") !== filterType) return false;
+    if (search && !(p.name || "").toLowerCase().includes(search.toLowerCase()) && !(p.phone || "").includes(search)) return false;
     return true;
   });
 
@@ -255,11 +261,11 @@ export default function ProfilesPage({ data, setData, currentUser }: Props) {
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <h3 className="font-semibold text-white text-lg">{profile.name}</h3>
-                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium border mt-1 ${roleColors[profile.type]}`}>
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium border mt-1 ${roleColors[(profile.type as keyof typeof roleColors) || 'customer']}`}>
                       {profile.type === 'customer' && <Briefcase className="w-3 h-3" />}
                       {profile.type === 'supplier' && <Tag className="w-3 h-3" />}
                       {profile.type === 'worker' && <Users className="w-3 h-3" />}
-                      {profile.type.charAt(0).toUpperCase() + profile.type.slice(1)}
+                      {(profile.type || 'customer').charAt(0).toUpperCase() + (profile.type || 'customer').slice(1)}
                     </span>
                   </div>
                   <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">

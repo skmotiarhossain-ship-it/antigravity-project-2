@@ -254,7 +254,7 @@ export default function App() {
         </div>
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-slate-700 flex items-center justify-center text-white text-sm font-medium">
-            {currentUser.charAt(0).toUpperCase()}
+            {(currentUser || "?").charAt(0).toUpperCase()}
           </div>
         </div>
       </div>
@@ -336,7 +336,7 @@ export default function App() {
         <div className="p-3 border-t border-slate-800">
           <div className="flex items-center gap-3 px-3 py-2 mb-2">
             <div className="h-8 w-8 rounded-full bg-slate-700 flex items-center justify-center text-white text-sm font-medium">
-              {currentUser.charAt(0).toUpperCase()}
+              {(currentUser || "?").charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-medium truncate">{currentUser}</p>

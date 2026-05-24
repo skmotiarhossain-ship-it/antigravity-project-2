@@ -26,7 +26,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
   // Auto-sync missing transactions from purchases, sales, and processes
   useEffect(() => {
     let modified = false;
-    const newTx = [...data.transactions];
+    const newTx = [...(data.transactions || [])];
 
     const addTx = (id: string, gregorianDate: string, amount: number, type: "in" | "out", category: string, entityName: string) => {
       const txId = `auto_${id}`;
@@ -48,15 +48,15 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
     };
 
     // Purchases = You Got (Goods) => "in"
-    data.purchases.forEach(p => addTx(p.id, p.gregorianDate, p.totalAmount, "in", "Purchase", p.supplierName));
+    (data.purchases || []).forEach(p => addTx(p.id, p.gregorianDate, p.totalAmount, "in", "Purchase", p.supplierName));
     
     // Sales = You Gave (Goods) => "out"
-    data.sales.forEach(s => addTx(s.id, s.gregorianDate, s.totalAmount, "out", "Sales", s.customerName));
+    (data.sales || []).forEach(s => addTx(s.id, s.gregorianDate, s.totalAmount, "out", "Sales", s.customerName));
     
     // Processes = You Got (Services/Transport) => "in"
-    data.processes.forEach(p => {
+    (data.processes || []).forEach(p => {
       if (p.transportCost > 0) addTx(`${p.id}_transport`, p.gregorianDate, p.transportCost, "in", "Transport", "Transport Provider");
-      p.workers.forEach((w, idx) => {
+      (p.workers || []).forEach((w, idx) => {
         const amt = w.bags * w.ratePerBag;
         if (amt > 0) addTx(`${p.id}_wages_${idx}`, p.gregorianDate, amt, "in", "Wages", w.workerName);
       });
@@ -107,7 +107,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
     };
 
     let newData = { ...data };
-    newData.transactions = [tx, ...newData.transactions].sort((a, b) => new Date(b.gregorianDate).getTime() - new Date(a.gregorianDate).getTime());
+    newData.transactions = [tx, ...(newData.transactions || [])].sort((a, b) => new Date(b.gregorianDate).getTime() - new Date(a.gregorianDate).getTime());
     newData = addChangeLog(newData, currentUser, "Added", "CashRegister", `Ledger entry: ₹${tx.amount} (${txType === "in" ? "Got" : "Gave"}) for ${tx.entityName}`);
     
     setData(newData);
@@ -129,14 +129,14 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
 
   // Determine list of entities based on active tab
   let entities: string[] = [];
-  if (activeTab === "customers") entities = data.customers;
-  else if (activeTab === "suppliers") entities = data.suppliers;
+  if (activeTab === "customers") entities = data.customers || [];
+  else if (activeTab === "suppliers") entities = data.suppliers || [];
   else if (activeTab === "workers") entities = data.workers || [];
 
   // Make sure to include profiles from transactions that might not be in the arrays
-  const txEntities = data.transactions.map(t => t.entityName);
+  const txEntities = (data.transactions || []).map(t => t.entityName);
   const allTabEntities = Array.from(new Set([...entities, ...txEntities.filter(e => {
-    const prof = data.profiles.find(p => p.name === e);
+    const prof = (data.profiles || []).find(p => p.name === e);
     // If it has a profile type, only include if it matches tab
     if (prof) {
       if (activeTab === "customers" && prof.type !== "customer") return false;
@@ -144,9 +144,9 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
       if (activeTab === "workers" && prof.type !== "worker") return false;
     } else {
       // If no profile, we can't reliably guess the tab without checking if they exist in the arrays
-      if (activeTab === "customers" && !data.customers.includes(e)) return false;
-      if (activeTab === "suppliers" && !data.suppliers.includes(e)) return false;
-      if (activeTab === "workers" && !data.workers.includes(e)) return false;
+      if (activeTab === "customers" && !(data.customers || []).includes(e)) return false;
+      if (activeTab === "suppliers" && !(data.suppliers || []).includes(e)) return false;
+      if (activeTab === "workers" && !(data.workers || []).includes(e)) return false;
     }
     return true;
   })]));
@@ -155,7 +155,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
 
   // Calculate balances helper
   const getProfileBalance = (name: string) => {
-    const txs = data.transactions.filter(t => t.entityName === name);
+    const txs = (data.transactions || []).filter(t => t.entityName === name);
     const totalOut = txs.filter(t => t.type === "out").reduce((sum, t) => sum + t.amount, 0);
     const totalIn = txs.filter(t => t.type === "in").reduce((sum, t) => sum + t.amount, 0);
     // You'll Get (Positive) = You Gave (Out) - You Got (In)
@@ -255,7 +255,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
   // PROFILE LEDGER DETAIL RENDER
   // ----------------------------------------------------
   if (activeProfile) {
-    const profileTxs = data.transactions.filter(t => t.entityName === activeProfile).sort((a, b) => new Date(b.gregorianDate).getTime() - new Date(a.gregorianDate).getTime());
+    const profileTxs = (data.transactions || []).filter(t => t.entityName === activeProfile).sort((a, b) => new Date(b.gregorianDate).getTime() - new Date(a.gregorianDate).getTime());
     const balance = getProfileBalance(activeProfile);
 
     return (
@@ -384,7 +384,7 @@ export default function CashRegisterPage({ data, setData, currentUser }: Props) 
               <div key={idx} onClick={() => setActiveProfile(entity)} className="bg-white p-4 flex items-center justify-between hover:bg-slate-50 cursor-pointer transition-colors group">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-lg shadow-sm">
-                    {entity.charAt(0).toUpperCase()}
+                    {(entity || "?").charAt(0).toUpperCase()}
                   </div>
                   <div>
                     <h3 className="font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{entity}</h3>
